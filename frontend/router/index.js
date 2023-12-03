@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/views/Home.vue'
 import ProjectDetail from '@/views/ProjectDetail.vue'
 import SignIn from '@/views/user/SignIn.vue'
+import Edit from '@/views/Edit.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +22,11 @@ const router = createRouter({
       name: 'login',
       component: SignIn,
       meta: { isPublic: true },
+    },
+    {
+      path: '/edit',
+      name: 'edit',
+      component: Edit,
     },
   ],
 })
