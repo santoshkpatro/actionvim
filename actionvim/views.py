@@ -1,7 +1,7 @@
 from django.views import View
 from django.shortcuts import HttpResponse
 from django.conf import settings
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 
 
 class IndexView(View):

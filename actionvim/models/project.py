@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+
 from actionvim.models.base import BaseUUIDTimestampModel
 
 
@@ -9,7 +10,7 @@ class Project(BaseUUIDTimestampModel):
     description = models.TextField(blank=True, null=True)
     is_public = models.BooleanField(default=False)
     task_prefix = models.CharField(blank=True, max_length=20, null=True)
-    task_count = models.IntegerField(default=0)
+    task_count = models.IntegerField(default=0, editable=False)
 
     created_by = models.ForeignKey(
         "User", on_delete=models.SET_NULL, null=True, related_name="created_projects"

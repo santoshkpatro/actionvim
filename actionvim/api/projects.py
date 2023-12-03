@@ -46,13 +46,12 @@ class ProjectListCreateAPIView(APIView):
         projects = request.user.projects.all()
         serializer = ProjectListSerializer(projects, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
-    
+
 
 class ProjectDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, public_id):
-        project = request.user.projects.filter(public_id=public_id).first()
+    def get(self, request, project_public_id):
+        project = request.user.projects.filter(public_id=project_public_id).first()
         serializer = ProjectDetailSerializer(project)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
-
