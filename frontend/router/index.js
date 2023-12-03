@@ -26,8 +26,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
-  if (to.meta.isPublic || token) next()
+  const user = localStorage.getItem('user')
+  if (to.meta.isPublic || user) next()
 
   next({
     path: '/user/sign_in',

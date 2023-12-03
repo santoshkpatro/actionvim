@@ -10,16 +10,14 @@ const userStore = useUserStore()
 const isLoading = ref(false)
 
 onMounted(async () => {
-  const refresh = localStorage.getItem("token")
-  if (!refresh) return
-
   try {
     isLoading.value = true
-    const { data } = await rawHttp.post("/api/user/token/", { token: refresh })
+    const { data } = await rawHttp.get("/api/user/profile/")
     userStore.setUser(data)
-    http.defaults.headers.common['Authorization'] = `Bearer ${data.tokens.access}`
+    // http.defaults.headers.common['Authorization'] = `Bearer ${data.tokens.access}`
+    localStorage.setItem("user", JSON.stringify(data))
   } catch (error) {
-    localStorage.removeItem("token")
+    localStorage.removeItem("user")
   } finally {
     isLoading.value = false
   }

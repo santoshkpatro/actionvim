@@ -16,10 +16,10 @@ const formState = reactive({
 const onFinish = async (values) => {
   console.log('Success:', values)
 
-  const { data } = await rawHttp.post('/api/user/sign_in/', values)
-  localStorage.setItem("token", data.user.tokens.refresh)
+  const { data } = await rawHttp.post('/api/user/login/', values)
+  localStorage.setItem("user", JSON.stringify(data.user))
 
-  http.defaults.headers.common['Authorization'] = `Bearer ${data.user.tokens.access}`
+  // http.defaults.headers.common['Authorization'] = `Bearer ${data.user.tokens.access}`
   userStore.setUser(data.user)
 
   router.push({ name: 'home' })
