@@ -13,11 +13,22 @@ onMounted(async () => {
     console.log(error)
   }
 })
+
+const handleLogout = async () => {
+  try {
+    await http.get("/api/user/logout/")
+    localStorage.removeItem("user")
+    window.location.reload()
+  } catch (error) {
+    console.log(error)    
+  }
+}
 </script>
 
 <template>
   <main>
     <h1>Projects</h1>
+    <a-button type="dashed" @click="handleLogout">Logout</a-button>
 
     <RouterLink :to="{ name: 'project-detail', params: { public_id: project.public_id } }" v-for="project in projects" :key="project.id">
       <a-card :title="project.title" style="width: 300px">

@@ -1,10 +1,10 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 from rest_framework.response import Response
 from rest_framework import status, serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 from actionvim.models import User
 from rest_framework.views import APIView
-
+from rest_framework.permissions import IsAuthenticated
 
 
 class LoginSerializer(serializers.Serializer):
@@ -15,10 +15,10 @@ class LoginSerializer(serializers.Serializer):
 class BasicProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "email", "username", "avatar", "phone", "tokens"]
+        fields = ["id", "email", "username", "avatar", "phone"]
+    
 
-
-class SignInAPIView(APIView):
+class LoginAPIView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if not serializer.is_valid():
@@ -39,6 +39,7 @@ class SignInAPIView(APIView):
             )
 
         profile_serializer = BasicProfileSerializer(user)
+        login(request, user)
         return Response(
             data={
                 "detail": "Login success",
@@ -46,7 +47,24 @@ class SignInAPIView(APIView):
             },
             status=status.HTTP_200_OK,
         )
-    
+
+
+class ProfileAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        serializer = BasicProfileSerializer(user)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class LogoutAPIView(APIView):
+    def get(self, request):
+        logout(request)
+        return Response(
+            data={"detail": "You have been logged out!"}, status=status.HTTP_200_OK
+        )
+
 
 class TokenAPIView(APIView):
     def post(self, request):
@@ -57,4 +75,7 @@ class TokenAPIView(APIView):
             profile_serializer = BasicProfileSerializer(user)
             return Response(data=profile_serializer.data, status=status.HTTP_200_OK)
         except:
-            return Response(data={"detail": "Token has been expired or invalid"}, status=status.HTTP_308_PERMANENT_REDIRECT)
+            return Response(
+                data={"detail": "Token has been expired or invalid"},
+                status=status.HTTP_308_PERMANENT_REDIRECT,
+            )
