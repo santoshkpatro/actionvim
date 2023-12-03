@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.response import Response
 from rest_framework import status, serializers
-from rest_framework_simplejwt.tokens import RefreshToken
 from actionvim.models import User
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -64,18 +63,3 @@ class LogoutAPIView(APIView):
         return Response(
             data={"detail": "You have been logged out!"}, status=status.HTTP_200_OK
         )
-
-
-class TokenAPIView(APIView):
-    def post(self, request):
-        refresh_token = request.data.get("token")
-        try:
-            token = RefreshToken(refresh_token)
-            user = User.objects.filter(id=token["user_id"]).first()
-            profile_serializer = BasicProfileSerializer(user)
-            return Response(data=profile_serializer.data, status=status.HTTP_200_OK)
-        except:
-            return Response(
-                data={"detail": "Token has been expired or invalid"},
-                status=status.HTTP_308_PERMANENT_REDIRECT,
-            )

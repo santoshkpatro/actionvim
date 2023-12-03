@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from actionvim.forms import UserChangeForm, UserCreationForm
-from actionvim.models import User, Project, Permission
+from actionvim.models import User, Project, Permission, Section, Task
 
 
 class UserAdmin(BaseUserAdmin):
@@ -42,10 +42,29 @@ class PermissionAdmin(admin.TabularInline):
     extra = 0
 
 
+class SectionInlineAdmin(admin.StackedInline):
+    model = Section
+    extra = 0
+
+
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ["id", "public_id", "created_at"]
-    inlines = [PermissionAdmin]
+    list_display = ["public_id", "task_count", "is_public", "created_at"]
+    inlines = [PermissionAdmin, SectionInlineAdmin]
+
+
+class TaskInlineAdmin(admin.StackedInline):
+    model = Task
+    extra = 0
+
+@admin.register(Section)
+class SectionAdmin(admin.ModelAdmin):
+    list_display = ["project", "title", "position", "created_at"]
+    inlines = [TaskInlineAdmin]
+
+@admin.register(Task)
+class TaskAdmin(admin.ModelAdmin):
+    list_display = ["public_id", "project", "title", "created_at"]
 
 
 # Now register the new UserAdmin...
