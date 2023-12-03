@@ -25,13 +25,12 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-
   if (to.meta.isPublic || token) next()
 
-  return {
+  next({
     path: '/user/sign_in',
     query: { redirect: to.fullPath },
-  }
+  })
 })
 
 export default router
