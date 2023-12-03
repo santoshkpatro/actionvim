@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Home from '../views/Home.vue'
+import ProjectDetail from '../views/ProjectDetail.vue'
+import SignIn from '../views/user/SignIn.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,17 +9,17 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: Home,
     },
     {
       path: '/:public_id',
       name: 'project-detail',
-      component: () => import('@/views/ProjectDetailView.vue'),
+      component: ProjectDetail,
     },
     {
       path: '/user/sign_in',
       name: 'login',
-      component: () => import('@/views/user/SignInView.vue'),
+      component: SignIn,
       meta: { isPublic: true },
     },
   ],
