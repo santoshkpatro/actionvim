@@ -14,7 +14,6 @@ class Section(BaseUUIDTimestampModel):
 
     class Meta:
         db_table = "sections"
-        unique_together = ["project", "position"]
 
     def __str__(self) -> str:
         return self.title

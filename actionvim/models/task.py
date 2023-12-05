@@ -21,6 +21,8 @@ class Task(BaseUUIDTimestampModel):
     archived_position = models.IntegerField(blank=True, null=True)
     archived_at = models.DateTimeField(blank=True, null=True)
 
+    members = models.ManyToManyField("User", through="TaskMember")
+
     class Meta:
         db_table = "tasks"
         unique_together = ["project", "public_id"]

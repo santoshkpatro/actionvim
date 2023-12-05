@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import F
 from django.db import transaction
-from actionvim.models import Project, Section, Task
+from actionvim.models import Project, Section, Task, User
 
 
 class SectionSerializer(serializers.ModelSerializer):
@@ -21,8 +21,15 @@ class TaskListSerializer(serializers.ModelSerializer):
         fields = ["id", "public_id", "section", "title", "position", "created_at"]
 
 
+class MemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "first_name", "last_name", "avatar"]
+
+
 class TaskSerializer(serializers.ModelSerializer):
     section = SectionSerializer()
+    members = MemberSerializer(many=True)
 
     class Meta:
         model = Task
@@ -33,6 +40,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "title",
             "position",
             "description",
+            "members",
             "updated_at",
             "created_at",
         ]
@@ -78,6 +86,7 @@ class TaskDetailAPIView(APIView):
         task: Task = (
             Task.objects.filter(project=project, public_id=task_public_id)
             .select_related("section")
+            .prefetch_related("members")
             .first()
         )
         if task is None:
