@@ -30,13 +30,17 @@ click-plugins==1.1.1.2
 click-repl==0.3.0
     # via celery
 coverage==7.10.2
-    # via actionvim (pyproject.toml:dev)
+    # via
+    #   actionvim (pyproject.toml:dev)
+    #   pytest-cov
 django==5.2.5
     # via
     #   actionvim (pyproject.toml)
     #   djangorestframework
 djangorestframework==3.16.0
     # via actionvim (pyproject.toml)
+iniconfig==2.1.0
+    # via pytest
 jmespath==1.0.1
     # via
     #   boto3
@@ -49,14 +53,30 @@ packaging==25.0
     # via
     #   black
     #   kombu
+    #   pytest
 pathspec==0.12.1
     # via black
 platformdirs==4.3.8
     # via black
+pluggy==1.6.0
+    # via
+    #   pytest
+    #   pytest-cov
 prompt-toolkit==3.0.51
     # via click-repl
 psycopg==3.2.9
     # via actionvim (pyproject.toml)
+pygments==2.19.2
+    # via pytest
+pytest==8.4.1
+    # via
+    #   actionvim (pyproject.toml:dev)
+    #   pytest-cov
+    #   pytest-django
+pytest-cov==6.2.1
+    # via actionvim (pyproject.toml:dev)
+pytest-django==4.11.1
+    # via actionvim (pyproject.toml:dev)
 python-dateutil==2.9.0.post0
     # via
     #   botocore
