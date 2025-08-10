@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class TeamsConfig(AppConfig):
+class ApplicationsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "actionvim.teams"
+    name = "actionvim.applications"

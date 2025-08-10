@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -33,7 +34,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 DJANGO_APS = [
-    "django.contrib.admin",
+    # "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -45,14 +46,10 @@ THIRD_PARTY_APPS = [
 ]
 LOCAL_APPS = [
     "actionvim.accounts",
-    "actionvim.issues",
-    "actionvim.labels",
-    "actionvim.organizations",
-    "actionvim.projects",
     "actionvim.shared",
-    "actionvim.states",
-    "actionvim.teams",
-    "actionvim.wikis",
+    "actionvim.applications",
+    "actionvim.events",
+    "actionvim.views",
 ]
 
 INSTALLED_APPS = DJANGO_APS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -141,3 +138,7 @@ STATICFILES_DIRS = [BASE_DIR / "out"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.User"
+
+
+# ActionVim specific settings
+APPLICATION_URL = os.environ.get("APPLICATION_URL", "http://localhost:5173")

@@ -1,64 +1,47 @@
 from django.db import models
 from django.utils.crypto import get_random_string
-
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 from actionvim.shared.models import BaseModel
 
 
-class Account(BaseModel, AbstractBaseUser):
-    email = models.EmailField(unique=True)
-    verified_at = models.DateTimeField(blank=True, null=True)
+class UserManager(BaseUserManager):
+    def create_superuser(self, email, full_name, password=None):
+        if not email:
+            raise ValueError("The Email field must be set")
+        if not full_name:
+            raise ValueError("The Full Name field must be set")
 
-    class Meta:
-        db_table = "accounts"
+        user = self.model(
+            email=self.normalize_email(email),
+            full_name=full_name,
+            role="superuser",
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 
 class User(BaseModel, AbstractBaseUser):
     class Role(models.TextChoices):
-        OWNER = ("owner", "Owner")
+        SUPERUSER = ("superuser", "Superuser")
+        ADMIN = ("admin", "Admin")
         STAFF = ("staff", "Staff")
-        INTERNAL = ("internal", "Internal")
 
-    user_code = models.CharField(max_length=12, blank=True, unique=True)
-    account = models.ForeignKey(
-        "accounts.Account",
-        on_delete=models.CASCADE,
-        related_name="users",
-        blank=True,
-        null=True,
-    )
-    organization = models.ForeignKey(
-        "organizations.Organization",
-        on_delete=models.CASCADE,
-        related_name="users",
-        blank=True,
-        null=True,
-    )
+    email = models.EmailField(unique=True)
     role = models.CharField(
         max_length=20,
         choices=Role.choices,
         default=Role.STAFF,
     )
-    email = models.EmailField()
     full_name = models.CharField(max_length=255, blank=True, null=True)
-    is_admin = models.BooleanField(default=False)
+    is_mfa_enabled = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
-    # password - Here password is repeated from Accounts just to support admin functionality of django
-
-    USERNAME_FIELD = "user_code"
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["email", "full_name"]
+
+    objects = UserManager()
 
     class Meta:
         db_table = "users"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["email", "organization"],
-                name="unique_user_email_per_organization",
-            ),
-        ]
-
-    def save(self, *args, **kwargs):
-        if self._state.adding:
-            self.user_code = get_random_string(12).upper()
-        super().save(*args, **kwargs)

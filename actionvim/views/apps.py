@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class OrganizationsConfig(AppConfig):
+class ViewsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "actionvim.organizations"
+    name = "actionvim.views"
