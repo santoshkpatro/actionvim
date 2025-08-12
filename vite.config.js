@@ -27,14 +27,6 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "static",
-    rollupOptions: {
-      input: {
-        main: fileURLToPath(new URL("./web/main.js", import.meta.url)),
-      },
-      output: {
-        entryFileNames: "main.js",
-      },
-    },
+    outDir: "frontend",
   },
 });

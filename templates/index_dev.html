@@ -13,14 +13,9 @@
 <body>
     <div id="app"></div>
 
-    {% if DEBUG %}
     <!-- Dev: Vite server -->
     <script type="module" src="http://localhost:5173/static/@vite/client"></script>
     <script type="module" src="http://localhost:5173/static/web/main.js"></script>
-    {% else %}
-    <!-- Prod: built file from Django static root -->
-    <script type="module" src="{% static 'main.js' %}"></script>
-    {% endif %}
 </body>
 
 </html>
