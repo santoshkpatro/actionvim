@@ -1,1 +1,1 @@
-pip install -r requirements/prod.txt
+pip3 install -r requirements/prod.txt
