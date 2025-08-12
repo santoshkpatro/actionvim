@@ -18,19 +18,19 @@ class AccountViewSet(ViewSet):
             return error_response(
                 message="Invalid credentials",
                 errors=serializer.errors,
-                status_code=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_400_BAD_REQUEST,
             )
         validated_data = serializer.validated_data
         user = User.objects.filter(email=validated_data["email"]).first()
         if not user or not user.check_password(validated_data["password"]):
             return error_response(
                 message="Invalid credentials. Please check your email and password.",
-                status_code=status.HTTP_401_UNAUTHORIZED,
+                status=status.HTTP_401_UNAUTHORIZED,
             )
         if not user.is_active:
             return error_response(
                 message="User is inactive. Please contact support or your administrator.",
-                status_code=status.HTTP_403_FORBIDDEN,
+                status=status.HTTP_403_FORBIDDEN,
             )
         login(request, user)
         user_data = UserSerializer(user).data
@@ -38,4 +38,17 @@ class AccountViewSet(ViewSet):
             message="Sign in successful",
             data=user_data,
             status_code=status.HTTP_200_OK,
+        )
+
+    @action(detail=False, methods=["get"], url_path="me")
+    def me(self, request, *args, **kwargs):
+        data = {"authenticated": False, "user": None}
+        if request.user.is_authenticated:
+            data["authenticated"] = True
+            data["user"] = UserSerializer(request.user).data
+
+        return success_response(
+            message="Authentication status",
+            data=data,
+            status=status.HTTP_200_OK,
         )
