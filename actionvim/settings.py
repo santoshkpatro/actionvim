@@ -141,3 +141,17 @@ STATICFILES_DIRS = [BASE_DIR / "frontend"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.User"
+
+# REST Framework settings
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_RENDERER_CLASSES": [
+        "actionvim.response.CamelCaseJSONRenderer",
+    ],
+    "DEFAULT_PARSER_CLASSES": [
+        "actionvim.response.CamelCaseJSONParser",
+    ],
+}
