@@ -1,0 +1,12 @@
+@layer theme, base, components, utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss/theme.css" layer(theme);
+/* @import "tailwindcss/preflight.css" layer(base); Commented out to avoid conflicts with Ant Design Vue reset */
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@import 'ant-design-vue/dist/reset.css';
+
+body {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+}
