@@ -7,6 +7,11 @@ const router = createRouter({
   history: createWebHistory("/"),
   routes: [
     {
+      path: "/setup",
+      name: "setup",
+      component: () => import("@/components/setup-page.vue"),
+    },
+    {
       path: "/sign_in",
       name: "sign_in",
       component: () => import("@/components/signin-page.vue"),
@@ -24,6 +29,11 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const store = useStore();
+
+  if (!store.isSiteMetaLoaded && to.name !== "setup") {
+    next({ name: "setup" });
+    return;
+  }
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!store.isAuthenticated) {

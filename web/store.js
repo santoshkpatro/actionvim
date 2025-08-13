@@ -1,16 +1,29 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
-import { getMe } from "@/api";
+import { getMe, getSiteMeta } from "@/api";
 
 export const useStore = defineStore("store", () => {
+  const siteMeta = ref(null);
+  const isSiteMetaLoaded = computed(() => !!siteMeta.value);
+
   const loggedInUser = ref(null);
   const isAuthenticated = computed(() => !!loggedInUser.value);
 
+  const loadSiteMeta = async () => {
+    try {
+      const siteData = await getSiteMeta();
+      console.log("Site Meta Data:", siteData);
+      if (!siteData.isReady) {
+        console.warn("Site is not ready yet.");
+      }
+    } catch (error) {}
+  };
+
   const setLoggedInUser = async () => {
     try {
-      const { data } = await getMe();
-      if (data.is_authenticated) {
-        loggedInUser.value = data.user;
+      const authStatus = await getMe();
+      if (authStatus.authenticated) {
+        loggedInUser.value = authStatus.user;
       } else {
         loggedInUser.value = null;
       }
@@ -29,5 +42,8 @@ export const useStore = defineStore("store", () => {
     isAuthenticated,
     setLoggedInUser,
     clearLoggedInUser,
+    siteMeta,
+    isSiteMetaLoaded,
+    loadSiteMeta,
   };
 });

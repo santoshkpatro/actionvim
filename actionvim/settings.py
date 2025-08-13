@@ -155,3 +155,6 @@ REST_FRAMEWORK = {
         "actionvim.response.CamelCaseJSONParser",
     ],
 }
+
+# Setting Config
+SETTING_ID = 1  # Default setting ID, can be overridden in models.py

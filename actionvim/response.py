@@ -67,22 +67,32 @@ def convert_keys_to_snake(data):
         return data
 
 
-def success_response(data=None, message="Success", status=HTTP_200_OK):
+def success_response(data=None, message=None, details=None, status=HTTP_200_OK):
     return Response(
-        {"success": True, "message": message, "data": data, "errors": None},
+        {
+            "success": True,
+            "message": message,
+            "data": data,
+            "error": None,
+            "details": details,
+        },
         status=status,
     )
 
 
 def error_response(
-    errors=None, message="Something went wrong", status=HTTP_400_BAD_REQUEST
+    error=None,
+    message="Something went wrong",
+    details=None,
+    status=HTTP_400_BAD_REQUEST,
 ):
     return Response(
         {
             "success": False,
             "message": message,
             "data": None,
-            "errors": errors if errors is not None else {},
+            "error": error if error is not None else {},
+            "details": details,
         },
         status=status,
     )

@@ -50,5 +50,6 @@ class AccountViewSet(ViewSet):
         return success_response(
             message="Authentication status",
             data=data,
+            details="User authentication status retrieved successfully",
             status=status.HTTP_200_OK,
         )

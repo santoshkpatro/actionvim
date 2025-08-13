@@ -14,6 +14,8 @@ app.use(router);
 async function initApp() {
   try {
     const store = useStore();
+
+    await store.loadSiteMeta();
     await store.setLoggedInUser();
   } catch (error) {
     console.error("Error initializing app:", error);

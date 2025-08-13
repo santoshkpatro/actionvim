@@ -10,3 +10,34 @@ body {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
 }
+
+/* Base notification box tweaks */
+.success-notification.ant-notification-notice,
+.error-notification.ant-notification-notice {
+    padding: 14px 16px;
+}
+
+/* Title text */
+.success-notification .ant-notification-notice-message,
+.error-notification .ant-notification-notice-message {
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+/* Description text */
+.success-notification .ant-notification-notice-description,
+.error-notification .ant-notification-notice-description {
+    font-size: 13px;
+    line-height: 1.4;
+    color: rgba(0, 0, 0, 0.65);
+}
+
+/* For success notifications */
+.success-notification {
+    border-left: 6px solid #1f4d8c;
+}
+
+/* For error notifications */
+.error-notification {
+    border-left: 6px solid #ff4d4f;
+}
