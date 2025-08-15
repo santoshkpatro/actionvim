@@ -1,10 +1,12 @@
 import { notification } from "ant-design-vue";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const http = axios.create({
   baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
+    "X-CSRFToken": Cookies.get("csrftoken") || "",
   },
 });
 
@@ -47,3 +49,4 @@ export const updateSiteMeta = (data) => http.patch("/site-meta", data);
 
 // Accounts API
 export const getMe = () => http.get("/accounts/me");
+export const signInAPI = (data) => http.post("/accounts/sign-in", data);

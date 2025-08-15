@@ -6,15 +6,7 @@ from rest_framework.routers import SimpleRouter
 
 from actionvim.shared.views import SiteMetaView
 from actionvim.accounts.views import AccountViewSet
-
-
-def index(request):
-    index_path = settings.BASE_DIR / "frontend" / "index.html"
-    if settings.DEBUG:
-        return render(request, "index.html")
-
-    return FileResponse(open(index_path, "rb"), content_type="text/html")
-
+from actionvim.misc_views import index, sign_out, health
 
 router = SimpleRouter(use_regex_path=False, trailing_slash=False)
 router.register(r"accounts", AccountViewSet, basename="accounts")
@@ -22,5 +14,7 @@ router.register(r"accounts", AccountViewSet, basename="accounts")
 urlpatterns = [
     path("api/", include(router.urls)),
     path("api/site-meta", SiteMetaView.as_view(), name="site-meta"),
+    path("sign-out", sign_out, name="sign-out"),
+    path("health", health, name="health"),
     re_path(r".*", index, name="index"),
 ]

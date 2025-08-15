@@ -12,6 +12,7 @@ from actionvim.response import success_response, error_response
 
 
 class AccountViewSet(ViewSet):
+    @action(detail=False, methods=["post"], url_path="sign-in")
     def sign_in(self, request, *args, **kwargs):
         serializer = SignInSerializer(data=request.data)
         if not serializer.is_valid():
@@ -37,7 +38,7 @@ class AccountViewSet(ViewSet):
         return success_response(
             message="Sign in successful",
             data=user_data,
-            status_code=status.HTTP_200_OK,
+            status=status.HTTP_200_OK,
         )
 
     @action(detail=False, methods=["get"], url_path="me")

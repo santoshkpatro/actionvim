@@ -102,6 +102,7 @@
 <script setup>
 import { reactive, ref, computed } from "vue";
 import { useStore } from "@/store";
+import { signInAPI } from "@/api";
 
 const store = useStore();
 
@@ -111,17 +112,6 @@ const form = reactive({
   password: "",
   remember: true,
 });
-
-const rules = {
-  email: [
-    { required: true, message: "Please enter your email" },
-    { type: "email, message: 'Enter a valid email'" },
-  ],
-  password: [
-    { required: true, message: "Please enter your password" },
-    { min: 6, message: "Minimum 6 characters" },
-  ],
-};
 
 // Org/support from Pinia with fallbacks
 const orgName = computed(() => store.siteMeta?.organizationName || "ActionVim");
@@ -139,9 +129,8 @@ const brandInitials = computed(() => {
 const onFinish = async () => {
   try {
     submitting.value = true;
-    // await api.post('/api/auth/login', form)
-    // router.push({ name: 'dashboard' })
-    console.log("Form submitted:", form);
+    await signInAPI(form);
+    window.location.href = "/"; // Redirect to home after successful sign-in (to re-establish cookie session)
   } finally {
     submitting.value = false;
   }

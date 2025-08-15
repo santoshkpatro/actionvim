@@ -12,8 +12,8 @@ const router = createRouter({
       component: () => import("@/components/setup-page.vue"),
     },
     {
-      path: "/sign_in",
-      name: "sign_in",
+      path: "/sign-in",
+      name: "sign-in",
       component: () => import("@/components/signin-page.vue"),
     },
     {
@@ -38,7 +38,7 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!store.isAuthenticated) {
       next({
-        name: "sign_in",
+        name: "sign-in",
         query: { redirect: to.fullPath },
       });
     } else {
