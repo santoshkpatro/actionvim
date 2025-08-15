@@ -17,7 +17,7 @@ http.interceptors.response.use(
         class: "success-notification",
         closeIcon: false,
         placement: "bottomRight",
-        duration: 4,
+        duration: 3,
         description: details || null,
       });
     }
@@ -34,7 +34,7 @@ http.interceptors.response.use(
       class: "error-notification",
       closeIcon: false,
       placement: "bottomRight",
-      duration: 4,
+      duration: 3,
       description: details,
     });
 
@@ -43,6 +43,7 @@ http.interceptors.response.use(
 );
 
 export const getSiteMeta = () => http.get("/site-meta");
+export const updateSiteMeta = (data) => http.patch("/site-meta", data);
 
 // Accounts API
 export const getMe = () => http.get("/accounts/me");

@@ -12,11 +12,14 @@ export const useStore = defineStore("store", () => {
   const loadSiteMeta = async () => {
     try {
       const siteData = await getSiteMeta();
-      console.log("Site Meta Data:", siteData);
       if (!siteData.isReady) {
         console.warn("Site is not ready yet.");
       }
-    } catch (error) {}
+      siteMeta.value = siteData.meta;
+    } catch (error) {
+      console.error("Error loading site meta:", error);
+      siteMeta.value = null;
+    }
   };
 
   const setLoggedInUser = async () => {

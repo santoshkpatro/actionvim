@@ -16,7 +16,8 @@ class BaseModel(models.Model):
 class Setting(models.Model):
     # Singleton model for application settings
     organization_name = models.CharField(max_length=128)
-    contact_email = models.EmailField(max_length=128)
+    organization_contact_email = models.EmailField(max_length=128)
+    organization_website = models.URLField(max_length=128, blank=True, null=True)
 
     maintenance_mode = models.BooleanField(default=False)
     maintenance_message = models.TextField(blank=True, null=True)
@@ -35,10 +36,17 @@ class Setting(models.Model):
     def load(cls):
         """
         Load the singleton setting instance.
-        If it doesn't exist, create it with default values.
         """
-        setting = cls.objects.filter(pk=cls.SETTING_ID).first()
-        if not setting:
-            raise ValueError(
-                "Settings instance does not exist. Please create it first."
-            )
+        return cls.objects.filter(pk=cls.SETTING_ID).first()
+
+    @classmethod
+    def initiate(
+        cls, organization_name, organization_contact_email, organization_website=None
+    ):
+        cls.objects.create(
+            pk=cls.SETTING_ID,
+            organization_name=organization_name,
+            organization_contact_email=organization_contact_email,
+            organization_website=organization_website,
+        )
+        return cls

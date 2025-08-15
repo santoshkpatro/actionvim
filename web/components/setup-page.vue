@@ -1,76 +1,39 @@
 <script setup>
-import { reactive, ref } from "vue";
-
-// Import ONLY Ant Design Vue icons explicitly (components are provided via your global plugin)
+import { ref } from "vue";
 import {
   SettingOutlined,
-  HomeOutlined,
-  ProfileOutlined,
   BulbOutlined,
   SafetyOutlined,
   BankOutlined,
-  //   PaletteOutlined,
+  BgColorsOutlined,
   FormOutlined,
-  InfoCircleOutlined,
   ApartmentOutlined,
   MailOutlined,
-  SaveOutlined,
   CheckCircleOutlined,
-  ArrowLeftOutlined,
   UserOutlined,
   LockOutlined,
+  GlobalOutlined,
 } from "@ant-design/icons-vue";
+import { updateSiteMeta } from "@/api";
 
 const loading = ref(false);
+const formRef = ref();
 
-const orgFormRef = ref();
-const adminFormRef = ref();
-
-const org = reactive({
+// flat fields, using a single ref
+const formFields = ref({
   organizationName: "",
-  contactEmail: "",
+  organizationContactEmail: "",
+  organizationWebsite: "",
+  superuserFullName: "",
+  superuserEmail: "",
+  superuserPassword: "",
 });
-
-const admin = reactive({
-  name: "",
-  email: "",
-  password: "",
-});
-
-const orgRules = {
-  organizationName: [
-    { required: true, message: "Organization name is required" },
-    { min: 2, message: "Too short" },
-  ],
-  contactEmail: [
-    { required: true, message: "Contact email is required" },
-    { type: "email", message: "Enter a valid email" },
-  ],
-};
-
-const adminRules = {
-  name: [{ required: true, message: "Name is required" }],
-  email: [
-    { required: true, message: "Email is required" },
-    { type: "email", message: "Enter a valid email" },
-  ],
-  password: [
-    { required: true, message: "Password is required" },
-    { min: 8, message: "At least 8 characters" },
-  ],
-};
 
 async function onSubmit() {
   try {
     loading.value = true;
-    await orgFormRef.value?.validate();
-    await adminFormRef.value?.validate();
-    // TODO: call your APIs:
-    // 1) Save org settings -> POST /api/app-settings (or /api/site-meta)
-    // 2) Create superuser -> POST /api/admin/bootstrap
-    // Example payloads:
-    // await api.saveSettings({ organization_name: org.organizationName, organization_email: org.contactEmail })
-    // await api.bootstrapAdmin({ name: admin.name, email: admin.email, password: admin.password })
+    await formRef.value?.validate();
+    await updateSiteMeta(formFields.value);
   } finally {
     loading.value = false;
   }
@@ -98,7 +61,7 @@ async function onSubmit() {
     <div
       class="mx-auto max-w-6xl px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6"
     >
-      <!-- Left: Progress & Tips -->
+      <!-- Left: Tips -->
       <div class="lg:col-span-1 space-y-6">
         <a-card :bordered="false" class="shadow-sm">
           <template #title>
@@ -120,7 +83,7 @@ async function onSubmit() {
               <span>Org name shows across emails and headers.</span>
             </div>
             <div class="flex items-start gap-2">
-              <PaletteOutlined class="mt-0.5" />
+              <BgColorsOutlined class="mt-0.5" />
               <span
                 >Branding can be adjusted later in
                 <b>Settings → Appearance</b>.</span
@@ -130,97 +93,179 @@ async function onSubmit() {
         </a-card>
       </div>
 
-      <!-- Right: Forms -->
-      <div class="lg:col-span-2 space-y-6">
-        <!-- Organization Basics -->
+      <!-- Right: Single Form -->
+      <div class="lg:col-span-2">
         <a-card :bordered="false" class="shadow-sm">
           <template #title>
             <div class="flex items-center gap-2">
               <FormOutlined />
-              <span>Organization Basics</span>
+              <span>Setup Details</span>
             </div>
           </template>
 
           <a-form
-            ref="orgFormRef"
-            :model="org"
-            :rules="orgRules"
+            ref="formRef"
+            :model="formFields"
+            name="setupForm"
             layout="vertical"
+            autocomplete="off"
             class="grid grid-cols-1 md:grid-cols-2 gap-4"
+            @finish="onSubmit"
           >
-            <a-form-item name="organizationName" label="Organization name">
-              <a-input
-                v-model:value="org.organizationName"
-                placeholder="Acme Corp"
-                allow-clear
-              >
-                <template #prefix><ApartmentOutlined /></template>
-              </a-input>
-            </a-form-item>
+            <!-- Organization -->
+            <div class="md:col-span-2">
+              <div class="text-sm font-semibold text-gray-700 mb-2">
+                Organization
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a-form-item
+                  name="organizationName"
+                  label="Organization name"
+                  :rules="[
+                    {
+                      required: true,
+                      message: 'Organization name is required',
+                    },
+                    {
+                      min: 2,
+                      message: 'Too short',
+                    },
+                  ]"
+                  validateTrigger="blur"
+                >
+                  <a-input
+                    v-model:value="formFields.organizationName"
+                    placeholder="Acme Corp"
+                    allow-clear
+                  >
+                    <template #prefix><ApartmentOutlined /></template>
+                  </a-input>
+                </a-form-item>
 
-            <a-form-item name="contactEmail" label="Contact email">
-              <a-input
-                v-model:value="org.contactEmail"
-                type="email"
-                placeholder="support@acme.com"
-                allow-clear
-              >
-                <template #prefix><MailOutlined /></template>
-              </a-input>
-            </a-form-item>
-          </a-form>
-        </a-card>
+                <a-form-item
+                  name="organizationContactEmail"
+                  label="Contact email"
+                  :rules="[
+                    {
+                      type: 'email',
+                      message: 'Please enter a valid email',
+                    },
+                    {
+                      required: true,
+                      message: 'Contact email is required',
+                    },
+                  ]"
+                  validateTrigger="blur"
+                >
+                  <a-input
+                    v-model:value="formFields.organizationContactEmail"
+                    type="email"
+                    placeholder="support@acme.com"
+                    allow-clear
+                    :rules="[
+                      { required: true, message: 'Contact email is required' },
+                      { type: 'email', message: 'Please enter a valid email' },
+                    ]"
+                    validateTrigger="blur"
+                  >
+                    <template #prefix><MailOutlined /></template>
+                  </a-input>
+                </a-form-item>
 
-        <!-- Superuser Account -->
-        <a-card :bordered="false" class="shadow-sm">
-          <template #title>
-            <div class="flex items-center gap-2">
-              <UserOutlined />
-              <span>Superuser Account</span>
+                <a-form-item
+                  name="organizationWebsite"
+                  label="Website"
+                  :rules="[
+                    { type: 'url', message: 'Please enter a valid URL' },
+                  ]"
+                  validateTrigger="blur"
+                >
+                  <a-input
+                    v-model:value="formFields.organizationWebsite"
+                    placeholder="https://acme.com"
+                    allow-clear
+                  >
+                    <template #prefix><GlobalOutlined /></template>
+                  </a-input>
+                </a-form-item>
+              </div>
             </div>
-          </template>
 
-          <a-form
-            ref="adminFormRef"
-            :model="admin"
-            :rules="adminRules"
-            layout="vertical"
-            class="grid grid-cols-1 md:grid-cols-2 gap-4"
-          >
-            <a-form-item name="name" label="Full name">
-              <a-input
-                v-model:value="admin.name"
-                placeholder="Jane Doe"
-                allow-clear
-              >
-                <template #prefix><UserOutlined /></template>
-              </a-input>
-            </a-form-item>
+            <!-- Superuser -->
+            <div class="md:col-span-2 mt-2">
+              <div class="text-sm font-semibold text-gray-700 mb-2">
+                Superuser
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a-form-item
+                  name="superuserFullName"
+                  label="Full name"
+                  :rules="[
+                    { required: true, message: 'Full name is required' },
+                    { min: 2, message: 'Too short' },
+                  ]"
+                  validateTrigger="blur"
+                >
+                  <a-input
+                    v-model:value="formFields.superuserFullName"
+                    placeholder="Jane Doe"
+                    allow-clear
+                  >
+                    <template #prefix><UserOutlined /></template>
+                  </a-input>
+                </a-form-item>
 
-            <a-form-item name="email" label="Admin email">
-              <a-input
-                v-model:value="admin.email"
-                type="email"
-                placeholder="admin@acme.com"
-                allow-clear
-              >
-                <template #prefix><MailOutlined /></template>
-              </a-input>
-            </a-form-item>
+                <a-form-item
+                  name="superuserEmail"
+                  label="Email"
+                  :rules="[
+                    { required: true, message: 'Admin email is required' },
+                    { type: 'email', message: 'Please enter a valid email' },
+                  ]"
+                  validateTrigger="blur"
+                >
+                  <a-input
+                    v-model:value="formFields.superuserEmail"
+                    type="email"
+                    placeholder="admin@acme.com"
+                    allow-clear
+                  >
+                    <template #prefix><MailOutlined /></template>
+                  </a-input>
+                </a-form-item>
 
-            <a-form-item name="password" label="Password" class="md:col-span-2">
-              <a-input-password
-                v-model:value="admin.password"
-                placeholder="At least 8 characters"
-              >
-                <template #prefix><LockOutlined /></template>
-              </a-input-password>
-            </a-form-item>
+                <a-form-item
+                  name="superuserPassword"
+                  label="Password"
+                  class="md:col-span-2"
+                  :rules="[
+                    { required: true, message: 'Password is required' },
+                    {
+                      min: 8,
+                      message: 'Password must be at least 8 characters',
+                    },
+                  ]"
+                  validateTrigger="blur"
+                >
+                  <a-input-password
+                    v-model:value="formFields.superuserPassword"
+                    placeholder="At least 8 characters"
+                    autocomplete="new-password"
+                    allow-clear
+                  >
+                    <template #prefix><LockOutlined /></template>
+                  </a-input-password>
+                </a-form-item>
+              </div>
+            </div>
 
-            <a-button type="primary" :loading="loading" @click="onSubmit">
-              <CheckCircleOutlined />
-              <span class="ml-1">Complete setup</span>
-            </a-button>
+            <!-- Submit -->
+            <div class="md:col-span-2">
+              <a-button type="primary" :loading="loading" html-type="submit">
+                <CheckCircleOutlined />
+                <span class="ml-1">Complete setup</span>
+              </a-button>
+            </div>
           </a-form>
         </a-card>
       </div>

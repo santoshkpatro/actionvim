@@ -6,6 +6,7 @@ from actionvim.accounts.models import User
 class SignInSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True, required=True)
+    remember_me = serializers.BooleanField(default=False, required=False)
 
 
 class UserSerializer(serializers.ModelSerializer):

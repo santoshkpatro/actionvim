@@ -5,11 +5,13 @@
       <div class="mb-8 text-center">
         <div
           class="inline-flex items-center justify-center w-11 h-11 rounded-2xl bg-gray-100 border border-gray-200 shadow-sm"
+          :title="orgName"
+          aria-label="Brand"
         >
-          <span class="text-lg font-semibold">AV</span>
+          <span class="text-lg font-semibold">{{ brandInitials }}</span>
         </div>
         <h1 class="mt-4 text-2xl font-semibold tracking-tight">
-          Sign in to ActionVim
+          Sign in to {{ orgName }}
         </h1>
       </div>
 
@@ -17,20 +19,32 @@
       <div class="rounded-2xl border border-gray-200 shadow-sm p-6">
         <a-form
           :model="form"
-          :rules="rules"
           layout="vertical"
           @finish="onFinish"
           @finishFailed="onFinishFailed"
           hide-required-mark
         >
-          <a-form-item name="email" label="Email">
+          <a-form-item
+            name="email"
+            label="Email"
+            :rules="[
+              { required: true, message: 'Please enter your email' },
+              { type: 'email', message: 'Enter a valid email' },
+            ]"
+            validateTrigger="blur"
+          >
             <a-input
               v-model:value="form.email"
               placeholder="name@company.com"
             />
           </a-form-item>
 
-          <a-form-item name="password" label="Password">
+          <a-form-item
+            name="password"
+            label="Password"
+            :rules="[{ required: true, message: 'Please enter your password' }]"
+            validateTrigger="blur"
+          >
             <a-input-password
               v-model:value="form.password"
               placeholder="••••••••"
@@ -39,9 +53,15 @@
 
           <div class="flex items-center justify-between mb-3">
             <a-checkbox v-model:checked="form.remember">Remember me</a-checkbox>
-            <a-typography-link @click.prevent="onForgot" class="text-sm"
-              >Forgot password?</a-typography-link
+
+            <!-- Tailwind-styled anchor instead of Ant Typography -->
+            <a
+              href="#"
+              class="text-sm underline text-gray-500 hover:text-gray-700"
+              @click.prevent="onForgot"
             >
+              Forgot password?
+            </a>
           </div>
 
           <a-button
@@ -56,20 +76,34 @@
       </div>
 
       <!-- Footer / Help -->
-      <div class="mt-8 text-center text-xs text-gray-400">
-        By continuing, you agree to our
-        <a class="underline hover:text-gray-600" href="#">Terms</a> and
-        <a class="underline hover:text-gray-600" href="#">Privacy Policy</a>.
+      <div class="mt-8 text-center text-xs text-gray-400 space-y-2">
+        <div>
+          By continuing, you agree to our
+          <a class="underline hover:text-gray-600" href="#">Terms</a> and
+          <a class="underline hover:text-gray-600" href="#">Privacy Policy</a>.
+        </div>
+        <div>
+          Need help?
+          <a
+            class="underline hover:text-gray-600"
+            :href="`mailto:${supportEmail}`"
+          >
+            {{ supportEmail }}
+          </a>
+        </div>
+        <div class="pt-1">
+          Powered by <span class="font-medium text-gray-500">ActionVim</span>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, computed } from "vue";
+import { useStore } from "@/store";
 
-// Ant Design Vue components are globally registered via your plugin setup.
-// This file intentionally avoids local imports.
+const store = useStore();
 
 const submitting = ref(false);
 const form = reactive({
@@ -81,7 +115,7 @@ const form = reactive({
 const rules = {
   email: [
     { required: true, message: "Please enter your email" },
-    { type: "email", message: "Enter a valid email" },
+    { type: "email, message: 'Enter a valid email'" },
   ],
   password: [
     { required: true, message: "Please enter your password" },
@@ -89,28 +123,33 @@ const rules = {
   ],
 };
 
+// Org/support from Pinia with fallbacks
+const orgName = computed(() => store.siteMeta?.organizationName || "ActionVim");
+const supportEmail = computed(
+  () => store.siteMeta?.organizationContactEmail || "support@actionvim.com"
+);
+
+// Brand initials
+const brandInitials = computed(() => {
+  const name = (orgName.value || "").trim();
+  const letters = name.match(/\b[A-Za-z]/g);
+  return (letters?.slice(0, 2).join("") || "AV").toUpperCase();
+});
+
 const onFinish = async () => {
   try {
     submitting.value = true;
-    // TODO: call your auth API here
     // await api.post('/api/auth/login', form)
-    // On success, route to your app dashboard
     // router.push({ name: 'dashboard' })
+    console.log("Form submitted:", form);
   } finally {
     submitting.value = false;
   }
 };
 
-const onFinishFailed = () => {
-  // Optional: you can show a message or focus the first invalid field
-};
-
+const onFinishFailed = () => {};
 const onForgot = () => {
   // router.push({ name: 'forgot-password' })
-};
-
-const onSignup = () => {
-  // router.push({ name: 'register' })
 };
 </script>
 
