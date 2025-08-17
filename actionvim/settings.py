@@ -51,6 +51,7 @@ LOCAL_APPS = [
     "actionvim.applications",
     "actionvim.events",
     "actionvim.views",
+    "actionvim.ingest",
 ]
 
 INSTALLED_APPS = DJANGO_APS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -157,4 +158,10 @@ REST_FRAMEWORK = {
 }
 
 # Setting Config
-SETTING_ID = 1  # Default setting ID, can be overridden in models.py
+SETTING_ID = os.environ.get("SETTING_ID", "1")
+
+# Celery settings
+CELERY_BORKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get(
+    "CELERY_RESULT_BACKEND", "redis://localhost:6379/0"
+)
