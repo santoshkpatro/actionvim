@@ -19,7 +19,7 @@ const router = createRouter({
     {
       path: "/application/create",
       name: "application-create",
-      component: () => import("@/components/application-create.vue"),
+      component: () => import("@/components/application-create-page.vue"),
       meta: {
         requiresAuth: true,
       },
@@ -48,6 +48,9 @@ const router = createRouter({
       path: "/",
       component: () => import("@/components/index-page.vue"),
       name: "index",
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: "/:pathMatch(.*)*",

@@ -18,7 +18,7 @@ class AccountViewSet(ViewSet):
         if not serializer.is_valid():
             return error_response(
                 message="Invalid credentials",
-                errors=serializer.errors,
+                error="invalid_input",
                 status=status.HTTP_400_BAD_REQUEST,
             )
         validated_data = serializer.validated_data

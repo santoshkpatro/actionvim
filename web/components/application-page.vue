@@ -17,6 +17,9 @@ import {
   Mail,
   HelpCircle,
   BookOpenText,
+  ChevronDown,
+  CircleDot,
+  Plus,
 } from "lucide-vue-next";
 import { applicationsListAPI } from "@/api";
 
@@ -28,9 +31,6 @@ const store = useStore();
 const brandName = computed(() => store?.siteMeta?.organizationName || "Micron");
 const logoUrl = computed(
   () => store?.siteMeta?.organizationLogo || store?.siteMeta?.logoUrl || ""
-);
-const websiteUrl = computed(
-  () => store?.siteMeta?.organizationWebsite || store?.siteMeta?.website || ""
 );
 
 /* ===== Nav ===== */
@@ -102,25 +102,40 @@ const secondaryItems = computed(() => [
   { key: "docs", label: "Documentation", to: "/docs", icon: BookOpenText },
 ]);
 
+/* ===== Applications (for dropdown) ===== */
+const applications = computed(() => store?.applications || []);
+const currentApplication = computed(() => store?.currentApplication || null);
+
 async function go(to) {
   if (to && route.path !== to) await router.push(to);
 }
 
 const loadAndSetCurrentApplication = async () => {
-  const applications = await applicationsListAPI();
-  store.setApplications(applications);
+  const apps = await applicationsListAPI();
+  store.setApplications(apps);
 
-  const currentApplication = applications.find(
-    (app) => app.id === route.params.applicationId
-  );
-  if (!currentApplication) return router.push({ name: "not-found" });
-  store.setCurrentApplication(currentApplication);
+  const found = apps.find((app) => app.id === route.params.applicationId);
+  if (!found) return router.push({ name: "not-found" });
+  store.setCurrentApplication(found);
 };
+
+function onAppMenuClick({ key }) {
+  if (key === "__all__") {
+    router.push({ path: "/application/create" });
+    return;
+  }
+  const app = applications.value.find((a) => String(a.id) === String(key));
+  if (app) {
+    store.setCurrentApplication(app);
+    router.push({ path: `/application/${app.id}` });
+  }
+}
 
 onMounted(() => {
   loadAndSetCurrentApplication();
 });
 
+/* ===== Active page highlight ===== */
 const currentPage = ref("");
 const setCurrentPage = (pageName) => {
   currentPage.value = pageName;
@@ -137,7 +152,7 @@ function isActive(navKey) {
       class="w-56 h-full sticky top-0 bg-white border-r border-gray-200 flex flex-col select-none"
       aria-label="Primary"
     >
-      <!-- Brand: Logo (left) + Text (right); website below -->
+      <!-- Brand: Logo (left) + Text (right) -->
       <div class="px-2 py-2">
         <div class="flex items-center gap-2">
           <!-- Logo -->
@@ -161,18 +176,6 @@ function isActive(navKey) {
           >
             {{ brandName }}
           </span>
-        </div>
-
-        <!-- Website below -->
-        <div v-if="websiteUrl" class="mt-1">
-          <a
-            :href="websiteUrl"
-            target="_blank"
-            rel="noopener"
-            class="block text-xs text-gray-400 hover:text-gray-700 truncate"
-          >
-            {{ websiteUrl }}
-          </a>
         </div>
       </div>
 
@@ -237,18 +240,52 @@ function isActive(navKey) {
 
     <!-- Content area with Topbar -->
     <div class="flex-1 flex flex-col min-w-0">
-      <!-- Topbar: Ant search left, profile icon right -->
+      <!-- Topbar: App dropdown (left), profile (right) -->
       <div
-        class="h-12 bg-white border-b border-gray-200 px-2 flex items-center"
+        class="h-12 bg-white border-b border-gray-200 px-2 flex items-center gap-2"
       >
-        <!-- Search always sticks left -->
-        <a-input-search
-          class="w-full max-w-md"
-          size="middle"
-          placeholder="Search…"
-          allow-clear
-          @search="(v) => router.push({ path: '/search', query: { q: v } })"
-        />
+        <!-- App selector -->
+        <a-dropdown trigger="['click']">
+          <div
+            class="inline-flex items-center gap-1.5 px-2 py-1.5 text-[13px] font-medium text-gray-700 cursor-pointer"
+            aria-label="Select application"
+          >
+            <span class="truncate max-w-[220px]">
+              {{ currentApplication?.name || "Select application" }}
+            </span>
+            <ChevronDown class="w-4 h-4 text-gray-600" />
+          </div>
+
+          <template #overlay>
+            <a-menu @click="onAppMenuClick">
+              <a-menu-item
+                v-for="app in applications"
+                :key="app.id"
+                :title="app.name"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="truncate">{{ app.name }}</span>
+
+                  <!-- Active app indicator -->
+                  <circle-dot
+                    v-if="
+                      currentApplication && currentApplication.id === app.id
+                    "
+                    class="w-2 h-2"
+                    fill="currentColor"
+                  ></circle-dot>
+                </div>
+              </a-menu-item>
+              <a-menu-divider />
+              <a-menu-item key="__all__">
+                <div class="inline-flex items-center gap-1">
+                  <plus class="h-4 w-4"></plus>
+                  <span>Create new application</span>
+                </div>
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
 
         <!-- Spacer pushes profile to right -->
         <div class="flex-1"></div>
@@ -264,8 +301,11 @@ function isActive(navKey) {
       </div>
 
       <!-- Main content -->
-      <main class="flex-1 overflow-y-auto p-2">
-        <router-view @currentPage="setCurrentPage" />
+      <main class="flex-1 overflow-y-auto p-4">
+        <router-view
+          @currentPage="setCurrentPage"
+          :key="route.params.applicationId"
+        />
       </main>
     </div>
   </div>

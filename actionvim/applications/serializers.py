@@ -12,3 +12,9 @@ class ApplicationSerializer(serializers.ModelSerializer):
             "website",
             "created_at",
         ]
+
+
+class ApplicationCreateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=255)
+    description = serializers.CharField(required=False, allow_blank=True)
+    website = serializers.URLField(required=False, allow_blank=True)
