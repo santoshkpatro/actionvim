@@ -40,6 +40,12 @@ export const useStore = defineStore("store", () => {
     loggedInUser.value = null;
   };
 
+  // Applications
+  const applications = ref([]);
+  const setApplications = (applicationsList) => {
+    applications.value = applicationsList;
+  };
+
   return {
     loggedInUser,
     isAuthenticated,
@@ -48,5 +54,7 @@ export const useStore = defineStore("store", () => {
     siteMeta,
     isSiteMetaLoaded,
     loadSiteMeta,
+    applications,
+    setApplications,
   };
 });

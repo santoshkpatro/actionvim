@@ -50,3 +50,6 @@ export const updateSiteMeta = (data) => http.patch("/site-meta", data);
 // Accounts API
 export const getMe = () => http.get("/accounts/me");
 export const signInAPI = (data) => http.post("/accounts/sign-in", data);
+
+// Application API
+export const applicationsAPI = () => http.get("/applications");

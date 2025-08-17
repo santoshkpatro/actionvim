@@ -6,6 +6,7 @@ from rest_framework import status
 # Create your views here.
 from actionvim.shared.models import Setting
 from actionvim.accounts.models import User
+from actionvim.applications.models import Application
 from actionvim.response import success_response, error_response
 from actionvim.shared.serializers import SettingUpdateSerializer
 
@@ -60,11 +61,13 @@ class SiteMetaView(APIView):
             organization_website=validated_data.get("organization_website", None),
         )
 
-        User.objects.create_superuser(
+        superuser = User.objects.create_superuser(
             full_name=validated_data.get("superuser_full_name"),
             email=validated_data.get("superuser_email"),
             password=validated_data.get("superuser_password"),
         )
+
+        Application.bootstrap_default_application(superuser)
         return success_response(
             message="Site setup completed successfully.",
             details="Your site has been set up successfully. You can now log in with the superuser account.",

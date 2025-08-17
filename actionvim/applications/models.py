@@ -19,6 +19,14 @@ class Application(BaseModel):
             self.capture_id = "cap_" + get_random_string(28).lower()
         return super().save(*args, **kwargs)
 
+    @classmethod
+    def bootstrap_default_application(cls, user):
+        application = cls.objects.create(
+            name="Default Application",
+            description="This is the default application created for new users.",
+        )
+        application.members.create(user=user, role=ApplicationMember.Role.ADMIN)
+
 
 class ApplicationMember(BaseModel):
     class Role(models.TextChoices):

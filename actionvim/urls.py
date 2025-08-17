@@ -1,15 +1,14 @@
 from django.urls import path, include, re_path
-from django.conf import settings
-from django.shortcuts import render
-from django.http import FileResponse
 from rest_framework.routers import SimpleRouter
 
+from actionvim.misc_views import index, sign_out, health
 from actionvim.shared.views import SiteMetaView
 from actionvim.accounts.views import AccountViewSet
-from actionvim.misc_views import index, sign_out, health
+from actionvim.applications.views import AplicationViewSet
 
 router = SimpleRouter(use_regex_path=False, trailing_slash=False)
 router.register(r"accounts", AccountViewSet, basename="accounts")
+router.register(r"applications", AplicationViewSet, basename="applications")
 
 urlpatterns = [
     path("api/", include(router.urls)),
