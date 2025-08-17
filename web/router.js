@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useStore } from "@/store";
 
-import IndexPage from "@/components/index-page.vue";
+import ApplicationPage from "@/components/application-page.vue";
 
 const router = createRouter({
   history: createWebHistory("/"),
@@ -17,9 +17,16 @@ const router = createRouter({
       component: () => import("@/components/signin-page.vue"),
     },
     {
-      path: "/",
-      name: "index",
-      component: IndexPage,
+      path: "/application/create",
+      name: "application-create",
+      component: () => import("@/components/application-create.vue"),
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: "/application/:applicationId",
+      component: ApplicationPage,
       meta: {
         requiresAuth: true,
       },
@@ -30,6 +37,16 @@ const router = createRouter({
           component: () => import("@/components/dashboard-page.vue"),
         },
       ],
+    },
+    {
+      path: "/",
+      component: () => import("@/components/index-page.vue"),
+      name: "index",
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "not-found",
+      component: () => import("@/components/not-found-page.vue"),
     },
   ],
 });

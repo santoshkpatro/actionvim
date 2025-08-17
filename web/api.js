@@ -52,4 +52,4 @@ export const getMe = () => http.get("/accounts/me");
 export const signInAPI = (data) => http.post("/accounts/sign-in", data);
 
 // Application API
-export const applicationsAPI = () => http.get("/applications");
+export const applicationsListAPI = () => http.get("/applications");

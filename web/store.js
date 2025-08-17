@@ -42,8 +42,12 @@ export const useStore = defineStore("store", () => {
 
   // Applications
   const applications = ref([]);
+  const currentApplication = ref(null);
   const setApplications = (applicationsList) => {
     applications.value = applicationsList;
+  };
+  const setCurrentApplication = (application) => {
+    currentApplication.value = application;
   };
 
   return {
@@ -56,5 +60,7 @@ export const useStore = defineStore("store", () => {
     loadSiteMeta,
     applications,
     setApplications,
+    currentApplication,
+    setCurrentApplication,
   };
 });
