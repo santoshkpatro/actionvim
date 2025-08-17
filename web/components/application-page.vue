@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "@/store";
 
@@ -35,13 +35,48 @@ const websiteUrl = computed(
 
 /* ===== Nav ===== */
 const primaryItems = [
-  { key: "dashboard", label: "Dashboard", to: "/", icon: LayoutDashboard },
-  { key: "views", label: "Views", to: "/views", icon: Eye },
-  { key: "events", label: "Events", to: "/events", icon: Zap },
-  { key: "identities", label: "Identities", to: "/identities", icon: IdCard },
-  { key: "people", label: "People", to: "/people", icon: Users },
-  { key: "cohorts", label: "Cohorts", to: "/cohorts", icon: Layers },
-  { key: "settings", label: "Settings", to: "/settings", icon: Settings },
+  {
+    key: "dashboard",
+    label: "Dashboard",
+    to: `/application/${route.params.applicationId}`,
+    icon: LayoutDashboard,
+  },
+  {
+    key: "views",
+    label: "Views",
+    to: `/application/${route.params.applicationId}/views`,
+    icon: Eye,
+  },
+  {
+    key: "events",
+    label: "Events",
+    to: `/application/${route.params.applicationId}/events`,
+    icon: Zap,
+  },
+  {
+    key: "identities",
+    label: "Identities",
+    to: `/application/${route.params.applicationId}/identities`,
+    icon: IdCard,
+  },
+  {
+    key: "people",
+    label: "People",
+    to: `/application/${route.params.applicationId}/people`,
+    icon: Users,
+  },
+  {
+    key: "cohorts",
+    label: "Cohorts",
+    to: `/application/${route.params.applicationId}/cohorts`,
+    icon: Layers,
+  },
+  {
+    key: "settings",
+    label: "Settings",
+    to: `/application/${route.params.applicationId}/settings`,
+    icon: Settings,
+  },
 ];
 
 const supportEmail = computed(
@@ -67,23 +102,6 @@ const secondaryItems = computed(() => [
   { key: "docs", label: "Documentation", to: "/docs", icon: BookOpenText },
 ]);
 
-// Longest-prefix active match
-const activeKey = computed(() => {
-  const p = route.path.toLowerCase();
-  let best = "";
-  let bestLen = -1;
-  for (const i of primaryItems) {
-    const to = i.to.toLowerCase();
-    const matches =
-      p === to || (to !== "/" && p.startsWith(to)) || (p === "/" && to === "/");
-    if (matches && to.length > bestLen) {
-      best = i.key;
-      bestLen = to.length;
-    }
-  }
-  return best || "";
-});
-
 async function go(to) {
   if (to && route.path !== to) await router.push(to);
 }
@@ -102,6 +120,14 @@ const loadAndSetCurrentApplication = async () => {
 onMounted(() => {
   loadAndSetCurrentApplication();
 });
+
+const currentPage = ref("");
+const setCurrentPage = (pageName) => {
+  currentPage.value = pageName;
+};
+function isActive(navKey) {
+  return navKey === currentPage.value;
+}
 </script>
 
 <template>
@@ -161,15 +187,14 @@ onMounted(() => {
             <a
               :href="item.to"
               class="no-underline group flex items-center gap-2 rounded-lg px-2 py-1.5 text-[13px] font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-              :class="activeKey === item.key ? 'bg-gray-100 text-gray-900' : ''"
+              :class="isActive(item.key) ? 'bg-gray-100 text-gray-900' : ''"
               @click.prevent="go(item.to)"
-              :aria-current="activeKey === item.key ? 'page' : undefined"
             >
               <component
                 :is="item.icon"
                 class="shrink-0 w-[17px] h-[17px]"
                 :class="
-                  activeKey === item.key
+                  isActive(item.key)
                     ? 'text-indigo-600'
                     : 'text-gray-600 group-hover:text-gray-800'
                 "
@@ -240,7 +265,7 @@ onMounted(() => {
 
       <!-- Main content -->
       <main class="flex-1 overflow-y-auto p-2">
-        <router-view />
+        <router-view @currentPage="setCurrentPage" />
       </main>
     </div>
   </div>
