@@ -1,5 +1,5 @@
 <script setup>
-import { eventsListAPI } from "@/api";
+import { eventsListAPI, eventsSchemaAPI } from "@/api";
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 
@@ -27,6 +27,9 @@ const columns = [
 
 const route = useRoute();
 const events = ref([]);
+const schema = ref({
+  eventNames: [],
+});
 
 const loadRecentEvents = async () => {
   const recentEvents = await eventsListAPI(route.params.applicationId);
@@ -38,9 +41,15 @@ const loadRecentEvents = async () => {
   });
 };
 
+const loadEventSchema = async () => {
+  schema.value = await eventsSchemaAPI(route.params.applicationId);
+};
+
 onMounted(() => {
-  loadRecentEvents();
   emit("currentPage", "events");
+
+  loadEventSchema();
+  loadRecentEvents();
 });
 </script>
 

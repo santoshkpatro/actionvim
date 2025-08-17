@@ -58,3 +58,5 @@ export const applicationsMineAPI = () => http.get("/applications/mine");
 // Events API
 export const eventsListAPI = (applicationId) =>
   http.get(`/applications/${applicationId}/events`);
+export const eventsSchemaAPI = (applicationId) =>
+  http.get(`/applications/${applicationId}/events/schema`);
