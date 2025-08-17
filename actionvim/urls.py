@@ -6,10 +6,13 @@ from actionvim.ingest.views import ingest
 from actionvim.shared.views import SiteMetaView
 from actionvim.accounts.views import AccountViewSet
 from actionvim.applications.views import AplicationViewSet
+from actionvim.events.views import EventViewSet
 
+# fmt: off
 router = SimpleRouter(use_regex_path=False, trailing_slash=False)
 router.register(r"accounts", AccountViewSet, basename="accounts")
 router.register(r"applications", AplicationViewSet, basename="applications")
+router.register(r"applications/<uuid:application_id>/events", EventViewSet, basename="events")
 
 urlpatterns = [
     path("api/", include(router.urls)),
