@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter, RouterLink } from "vue-router";
 import { useStore } from "@/store";
 
 // Lucide icons
@@ -34,7 +34,7 @@ const logoUrl = computed(
 );
 
 /* ===== Nav ===== */
-const primaryItems = [
+const primaryItems = computed(() => [
   {
     key: "dashboard",
     label: "Dashboard",
@@ -77,7 +77,7 @@ const primaryItems = [
     to: `/application/${route.params.applicationId}/settings`,
     icon: Settings,
   },
-];
+]);
 
 const supportEmail = computed(
   () => store?.siteMeta?.supportEmail || "support@actionvim.com"
@@ -187,8 +187,8 @@ function isActive(navKey) {
       >
         <ul class="px-1.5 space-y-1">
           <li v-for="item in primaryItems" :key="item.key">
-            <a
-              :href="item.to"
+            <RouterLink
+              :to="item.to"
               class="no-underline group flex items-center gap-2 rounded-lg px-2 py-1.5 text-[13px] font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
               :class="isActive(item.key) ? 'bg-gray-100 text-gray-900' : ''"
               @click.prevent="go(item.to)"
@@ -203,7 +203,7 @@ function isActive(navKey) {
                 "
               />
               <span class="truncate">{{ item.label }}</span>
-            </a>
+            </RouterLink>
           </li>
         </ul>
       </nav>
