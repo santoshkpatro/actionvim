@@ -4,6 +4,14 @@ from rest_framework import serializers
 from actionvim.events.models import Event
 
 
+class EventQuerySerializer(serializers.Serializer):
+    start = serializers.DateTimeField(required=False, allow_null=True)
+    end = serializers.DateTimeField(required=False, allow_null=True)
+    event_names = serializers.ListField(
+        child=serializers.CharField(), required=False, allow_empty=True
+    )
+
+
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event

@@ -75,6 +75,14 @@ def sample_pageview_properties():
     }
 
 
+def random_past_time():
+    # Define maximum range: let's say up to 3 years
+    max_days = 365 * 3
+    # Pick a random number of seconds within that range
+    random_seconds = random.randint(0, max_days * 24 * 60 * 60)
+    return timezone.now() - timezone.timedelta(seconds=random_seconds)
+
+
 class Command(BaseCommand):
     help = "Mockingest command to simulate data ingestion via capture_id (API Key)"
 
@@ -97,7 +105,7 @@ class Command(BaseCommand):
             payload = {
                 "name": "pagevisit",
                 "properties": sample_pageview_properties(),
-                "captured_at": timezone.now().isoformat(),
+                "captured_at": random_past_time().isoformat(),
             }
             response = httpx.post(
                 injestion_url,
