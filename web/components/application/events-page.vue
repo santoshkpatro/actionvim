@@ -2,6 +2,11 @@
 import { eventsListAPI, eventsSchemaAPI } from "@/api";
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { Menu } from "lucide-vue-next";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 const emit = defineEmits(["currentPage"]);
 
@@ -9,19 +14,22 @@ import EventProperties from "@/components/application/event-properties.vue";
 
 const columns = [
   {
+    key: "name",
     title: "Event",
     dataIndex: "name",
   },
   {
-    title: "Ref ID",
-    dataIndex: "id",
+    key: "capturedAt",
+    title: "Time",
   },
   {
-    title: "Captured at",
-    dataIndex: "capturedAt",
+    key: "source",
+    title: "Source",
+    dataIndex: "source",
   },
   {
-    title: "Action",
+    key: "action",
+    width: 75,
   },
 ];
 
@@ -54,7 +62,20 @@ onMounted(() => {
 </script>
 
 <template>
-  <a-table :columns="columns" :data-source="events">
+  <a-table
+    :columns="columns"
+    :data-source="events"
+    size="small"
+    :pagination="false"
+  >
+    <template #bodyCell="{ column, record }">
+      <template v-if="column.key === 'capturedAt'">
+        {{ dayjs(record.capturedAt).fromNow() }}
+      </template>
+      <template v-else-if="column.key === 'action'">
+        <Menu class="w-4 h-4"></Menu>
+      </template>
+    </template>
     <template #expandedRowRender="{ record }">
       <event-properties :properties="JSON.parse(record.properties)" />
     </template>

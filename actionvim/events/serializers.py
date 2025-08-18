@@ -11,6 +11,7 @@ class EventSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "properties",
+            "source",
             "captured_at",
             "created_at",
         ]

@@ -95,7 +95,7 @@ class Command(BaseCommand):
         injestion_url = f"{BASE_URL}/ingest/{capture_id}"
         while True:
             payload = {
-                "name": "pageview",
+                "name": "pagevisit",
                 "properties": sample_pageview_properties(),
                 "captured_at": timezone.now().isoformat(),
             }

@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed } from "vue";
-import { message } from "ant-design-vue";
 import { Copy } from "lucide-vue-next";
 
 const props = defineProps({
